@@ -1,0 +1,70 @@
+import pygame
+pygame.init()
+pygame.display.set_caption("SPACE INVADERS")
+window = pygame.display.set_mode((800, 800))
+clock = pygame.time.Clock()
+endgame = False
+xpos = 0
+ypos = 0
+moveLeft = False
+moveRight = False
+timer = 0;
+class Alien:
+    def __init__(self, xpos, ypos):
+        self.xpos = xpos
+        self.ypos = ypos
+        self.isAlive = True
+        self.direction = 1
+    def draw(self):
+        pygame.draw.rect(window, (250, 250, 250), (self.xpos, self.ypos, 40, 40))
+    def move(self, time):
+        if time % 800 == 0:
+            self.ypos += 100
+            self.direction *=-1
+            return 0
+        if time % 100 == 0:
+            self.xpos+=50*self.direction
+        return time
+armada = []
+for i in range (4):
+    for j in range (9):
+        armada.append(Alien(j*80+50, i*80+50))
+while not endgame:
+    clock.tick(60)
+    timer += 1
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            endgame = True
+    if event.type == pygame.KEYDOWN:
+        if event.key == pygame.K_LEFT:
+            moveLeft = True
+    elif event.type == pygame.KEYUP:
+        if event.key == pygame.K_LEFT:
+            moveLeft = False
+    if event.type == pygame.KEYDOWN:
+        if event.key == pygame.K_RIGHT:
+            moveRight = True
+    elif event.type == pygame.KEYUP:
+        if event.key == pygame.K_RIGHT:
+            moveRight = False
+    if moveLeft == True:
+        vx =- 3
+    else:
+        vx = 0
+    xpos += vx
+    if moveRight == True:
+        vx =+ 3
+    else:
+        vx = 0
+    xpos += vx
+    for i in range (len(armada)):
+       timer =  armada[i].move(timer)
+    window.fill((0,0,0))
+    pygame.draw.rect(window, (71, 255, 41), (xpos+400, ypos+750, 60, 20))
+    pygame.draw.rect(window, (71, 255, 41), (xpos+405, ypos+745, 50, 20))
+    pygame.draw.rect(window, (71, 255, 41), (xpos+424, ypos+735, 12, 20))
+    pygame.draw.rect(window, (71, 255, 41), (xpos+428, ypos+730, 4, 20))
+    for i in range (len(armada)):
+        timer = armada[i].move(timer)
+    pygame.display.flip()
+pygame.quit()
